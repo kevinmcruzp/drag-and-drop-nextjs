@@ -2,9 +2,13 @@
 
 import { Draggable } from "react-beautiful-dnd";
 import { Card } from "./Card";
-import { listQueue } from "../interfaces/queueType";
+import { listCard, listQueue } from "../interfaces/queueType";
+import { useState } from "react";
+import { v4 as uuidV4 } from 'uuid';
 
 export function Queue({queue, index} : {queue: listQueue, index: number}) {
+    const [cards, setCards] = useState<listCard[]>(queue?.cards)
+
     return (
       <Draggable draggableId={queue?.id} index={index}>
         {(provided, snapshot) => (
@@ -19,13 +23,21 @@ export function Queue({queue, index} : {queue: listQueue, index: number}) {
             </div>
 
             <div className="flex flex-col overflow-y-auto gap-2 scrollbar">
-              {queue?.cards?.map((card, index) => (
+              {cards?.map((card, index) => (
                 <Card key={card?.id} card={card} />
               ))}
 
             </div>
 
             <button 
+              onClick={() => {
+                const newCard = {
+                  id: uuidV4(),
+                  title: `Card ${cards?.length + 1}`,
+                  description: `Description ${cards?.length + 1}`
+                }
+                setCards([...cards, newCard])
+              }}
               className="text-center text-sm bg-slate-800 text-white w-full py-1"
             >
               CREATE CARD
